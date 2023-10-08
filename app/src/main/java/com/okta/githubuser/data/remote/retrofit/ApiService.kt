@@ -1,8 +1,8 @@
-package com.okta.githubuser.retrofit
+package com.okta.githubuser.data.remote.retrofit
 
-import com.okta.githubuser.data.response.DetailUserResponse
-import com.okta.githubuser.data.response.GitHubResponse
-import com.okta.githubuser.data.response.ItemsItem
+import com.okta.githubuser.data.remote.response.DetailUserResponse
+import com.okta.githubuser.data.remote.response.GitHubResponse
+import com.okta.githubuser.data.remote.response.ItemsItem
 import retrofit2.Call
 import retrofit2.http.*
 

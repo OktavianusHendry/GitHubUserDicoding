@@ -5,22 +5,26 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.okta.githubuser.data.response.ItemsItem
+import com.okta.githubuser.data.remote.response.ItemsItem
 import com.okta.githubuser.databinding.FragmentFollowBinding
+import com.okta.githubuser.viewmodels.DetailUserViewModel
+import com.okta.githubuser.viewmodels.FavUserViewModelFactory
 
 class FollowFragment : Fragment() {
 
-    companion object{
+    companion object {
         var ARG_POSITION = "arg_position"
         var ARG_USERNAME = "arg_username"
     }
 
     private lateinit var binding: FragmentFollowBinding
-    private val detailUserViewModel: DetailUserViewModel by viewModels()
+    private lateinit var detailUserViewModel: DetailUserViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,19 +38,22 @@ class FollowFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
+        val factory: FavUserViewModelFactory = FavUserViewModelFactory.getInstance(requireActivity())
+        detailUserViewModel = ViewModelProvider(requireActivity(), factory).get(DetailUserViewModel::class.java)
+
         val layoutManager = LinearLayoutManager(requireActivity())
-        binding.rvFollow.layoutManager= layoutManager
+        binding.rvFollow.layoutManager = layoutManager
         val itemDecoration = DividerItemDecoration(context, layoutManager.orientation)
         binding.rvFollow.addItemDecoration(itemDecoration)
 
         if (arguments != null) {
             val argPosition = arguments?.getInt(ARG_POSITION)
             val argUsername = arguments?.getString(ARG_USERNAME)
-            
+
             //Mengecek hasil data
             Log.d("TAG", "argUsername: $argUsername")
             Log.d("TAG", "argPosition: $argPosition")
-            if (argPosition == 0){
+            if (argPosition == 0) {
                 detailUserViewModel.findUserFollower(argUsername!!)
                 detailUserViewModel.listUserFollower.observe(viewLifecycleOwner, {
                     setUserFollowerData(it)
@@ -54,7 +61,7 @@ class FollowFragment : Fragment() {
                 detailUserViewModel.isLoadingFollower.observe(viewLifecycleOwner, {
                     showLoading(it)
                 })
-            }else{
+            } else {
                 detailUserViewModel.findUserFollowing(argUsername!!)
                 detailUserViewModel.listUserFollowing.observe(viewLifecycleOwner, {
                     setUserFollowingData(it)
@@ -85,6 +92,7 @@ class FollowFragment : Fragment() {
             binding.rvFollow.adapter = adapter
         }
     }
+
     private fun setUserFollowingData(following: List<ItemsItem>) {
         binding.rvFollow.apply {
             binding.rvFollow.layoutManager = LinearLayoutManager(context)

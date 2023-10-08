@@ -1,12 +1,12 @@
-package com.okta.githubuser.ui
+package com.okta.githubuser.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.okta.githubuser.data.response.GitHubResponse
-import com.okta.githubuser.data.response.ItemsItem
-import com.okta.githubuser.retrofit.ApiConfig
+import com.okta.githubuser.data.remote.response.GitHubResponse
+import com.okta.githubuser.data.remote.response.ItemsItem
+import com.okta.githubuser.data.remote.retrofit.ApiConfig
 import com.okta.githubuser.util.Event
 import retrofit2.Call
 import retrofit2.Callback

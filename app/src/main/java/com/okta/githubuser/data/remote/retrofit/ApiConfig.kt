@@ -1,4 +1,4 @@
-package com.okta.githubuser.retrofit
+package com.okta.githubuser.data.remote.retrofit
 
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -11,7 +11,7 @@ class ApiConfig {
             val authInterceptor = Interceptor { chain ->
                 val req = chain.request()
                 val requestHeaders = req.newBuilder()
-                    .addHeader("Authorization", "token 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")
+                    .addHeader("Authorization", "token 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")
                     .build()
                 chain.proceed(requestHeaders)
             }

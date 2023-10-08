@@ -1,19 +1,24 @@
-package com.okta.githubuser.ui
+package com.okta.githubuser.viewmodels
 
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.okta.githubuser.data.response.DetailUserResponse
-import com.okta.githubuser.data.response.ItemsItem
-import com.okta.githubuser.retrofit.ApiConfig
+import androidx.lifecycle.viewModelScope
+import com.okta.githubuser.data.FavUsersRepository
+import com.okta.githubuser.data.local.entity.FavUserEntity
+import com.okta.githubuser.data.remote.response.DetailUserResponse
+import com.okta.githubuser.data.remote.response.ItemsItem
+import com.okta.githubuser.data.remote.retrofit.ApiConfig
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DetailUserViewModel() : ViewModel() {
+class DetailUserViewModel(
+    private val favUsersRepository: FavUsersRepository
+) : ViewModel() {
 
     private val _detailUser = MutableLiveData<DetailUserResponse>()
     val detailUser: LiveData<DetailUserResponse> = _detailUser
@@ -33,12 +38,15 @@ class DetailUserViewModel() : ViewModel() {
     private val _isLoadingFollowing = MutableLiveData<Boolean>()
     val isLoadingFollowing: LiveData<Boolean> = _isLoadingFollowing
 
+    fun save(favUser: FavUserEntity) = viewModelScope.launch { favUsersRepository.insert(favUser) }
 
-    companion object {
-        private const val TAG = "DetailUserViewModel"
-    }
+    fun delete(favUser: FavUserEntity) =
+        viewModelScope.launch { favUsersRepository.delete(favUser) }
 
-    fun findUser(context: Context, username: String) {
+    fun isFavoriteUser(username: String) =
+        viewModelScope.async { favUsersRepository.isFavUser(username) }
+
+    fun findUser(username: String) {
         _isLoading.value = true
         val client = ApiConfig.getApiService().getDetailUser(username)
         client.enqueue(object : Callback<DetailUserResponse> {
@@ -51,7 +59,6 @@ class DetailUserViewModel() : ViewModel() {
                     _detailUser.value = response.body()
                 } else {
                     Log.e(TAG, "onFailure: ${response}")
-                    Toast.makeText(context, "Not Found", Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -109,5 +116,9 @@ class DetailUserViewModel() : ViewModel() {
                 Log.e(TAG, "onFailure: ${t.message}")
             }
         })
+    }
+
+    companion object {
+        private const val TAG = "DetailUserViewModel"
     }
 }
