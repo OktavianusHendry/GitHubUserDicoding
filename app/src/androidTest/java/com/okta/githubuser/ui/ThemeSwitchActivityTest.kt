@@ -15,7 +15,7 @@ import org.junit.runner.RunWith
 class ThemeSwitchActivityTest {
 
     @get:Rule
-    var activityRule = ActivityScenarioRule(SplashActivity::class.java)
+    var activityRule = ActivityScenarioRule(MainActivity::class.java)
 
     @Test
     fun testThemeSwitch() {
